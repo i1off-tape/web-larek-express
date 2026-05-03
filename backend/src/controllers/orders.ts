@@ -1,20 +1,23 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import crypto from 'crypto';
 import Product from '../models/product';
+import { BadRequestError } from '../errors/custom-errors';
 
-export const createOrder = async (req: Request, res: Response) => {
+export const createOrder = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { total, items } = req.body;
     const products = await Product.find({ _id: { $in: items } });
 
     if (products.length !== items.length) {
-      return res.status(400).send({ message: 'Некоторые товары не найдены' });
+      return next(new BadRequestError('Некоторые товары не найдены'));
     }
 
     if (products.some((p) => p.price === null)) {
-      return res
-        .status(400)
-        .send({ message: 'Некоторые товары не имеют цены' });
+      return next(new BadRequestError('Некоторые товары не имеют цены'));
     }
 
     const calculatedTotal = products.reduce(
@@ -23,11 +26,7 @@ export const createOrder = async (req: Request, res: Response) => {
     );
 
     if (calculatedTotal !== total) {
-      return res.status(400).send({
-        message: 'Некорректная сумма заказа',
-        expected: calculatedTotal,
-        received: total,
-      });
+      return next(new BadRequestError('Некорректная сумма заказа'));
     }
 
     return res.status(201).json({
@@ -35,7 +34,6 @@ export const createOrder = async (req: Request, res: Response) => {
       total,
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    return next(err);
   }
 };

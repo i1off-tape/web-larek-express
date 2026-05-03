@@ -1,14 +1,22 @@
-import { Request, Response } from 'express';
-
+import { NextFunction, Request, Response } from 'express';
+import { BadRequestError, ConflictError } from '../errors/custom-errors';
 import Product from '../models/product';
 
-export const getProducts = (_req: Request, res: Response) => {
+export const getProducts = (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   Product.find({})
     .then((products) => res.send({ items: products, total: products.length }))
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => next(err));
 };
 
-export const createProduct = (req: Request, res: Response) => {
+export const createProduct = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const {
     title, image, category, description, price,
   } = req.body;
@@ -21,12 +29,19 @@ export const createProduct = (req: Request, res: Response) => {
   })
     .then((product) => res.status(201).send({ data: product }))
     .catch((err) => {
-      if (err.code === 11000) {
-        res
-          .status(409)
-          .send({ message: 'Продукт с таким названием уже существует' });
-      } else {
-        res.status(500).send({ message: 'На сервере произошла ошибка' });
+      if (err instanceof Error && err.message.includes('E11000')) {
+        return next(
+          new ConflictError('Продукт с таким названием уже существует'),
+        );
       }
+
+      // Ошибка валидации Mongoose
+      if (err?.name === 'ValidationError') {
+        return next(
+          new BadRequestError('Ошибка валидации данных при создании товара'),
+        );
+      }
+
+      return next(err);
     });
 };
