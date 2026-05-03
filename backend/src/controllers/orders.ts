@@ -29,8 +29,8 @@ export const createOrder = async (
       return next(new BadRequestError('Некорректная сумма заказа'));
     }
 
-    return res.status(201).json({
-      orderId: crypto.randomUUID(),
+    return res.status(200).json({
+      id: crypto.randomUUID(),
       total,
     });
   } catch (err) {
