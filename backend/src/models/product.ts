@@ -17,11 +17,11 @@ const imageSchema = new mongoose.Schema<IImage>(
   {
     fileName: {
       type: String,
-      required: true,
+      required: [true, 'Имя файла изображения обязательно'],
     },
     originalName: {
       type: String,
-      required: true,
+      required: [true, 'Оригинальное имя файла обязательно'],
     },
   },
   {
@@ -32,18 +32,18 @@ const imageSchema = new mongoose.Schema<IImage>(
 const productSchema = new mongoose.Schema<IProduct>({
   title: {
     type: String,
-    required: true,
+    required: [true, 'Название товара обязательно'],
     unique: true,
-    minlength: 2,
-    maxlength: 30,
+    minlength: [2, 'Название товара должно содержать не менее 2 символов'],
+    maxlength: [30, 'Название товара должно содержать не более 30 символов'],
   },
   image: {
     type: imageSchema,
-    required: true,
+    required: [true, 'Изображение товара обязательно'],
   },
   category: {
     type: String,
-    required: true,
+    required: [true, 'Категория товара обязательна'],
   },
   description: {
     type: String,
@@ -53,6 +53,7 @@ const productSchema = new mongoose.Schema<IProduct>({
     type: Number,
     required: false,
     default: null,
+    min: [0, 'Цена товара не может быть отрицательной'],
   },
 });
 

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { isCelebrateError } from 'celebrate';
 import { CustomError } from '../errors/custom-errors';
 
 export const errorHandler = (
@@ -12,9 +13,9 @@ export const errorHandler = (
     return res.status(err.statusCode).json({ message: err.message });
   }
 
-  // 2. Ошибка валидации Mongoose или Celebrate
-  if (err.name === 'ValidationError' || err.name === 'CelebrateError') {
-    return res.status(400).json({ message: 'Ошибка валидации данных' });
+  // Celebrate
+  if (isCelebrateError(err)) {
+    return res.status(400).json({ message: err.message });
   }
 
   // 3. Ошибка дубликата MongoDB

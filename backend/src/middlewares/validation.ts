@@ -12,3 +12,26 @@ export const validateOrder = celebrate({
     items: Joi.array().items(Joi.string()).min(1).required(),
   }),
 });
+
+export const validateProduct = celebrate({
+  [Segments.BODY]: Joi.object({
+    title: Joi.string().min(2).max(30).required()
+      .messages({
+        'string.min': 'Минимальная длина поля "title" - 2',
+        'string.max': 'Максимальная длина поля "title" - 30',
+        'any.required': 'Поле "title" должно быть заполнено',
+        'string.empty': 'Поле "title" должно быть заполнено',
+      }),
+    image: Joi.object({
+      fileName: Joi.string().required(),
+      originalName: Joi.string().required().messages({
+        'any.required': 'Изображение товара обязательно',
+      }),
+    }).required(),
+    category: Joi.string().required(),
+    description: Joi.string().optional(),
+    price: Joi.number().positive().optional().messages({
+      'number.min': 'Цена товара не может быть отрицательной',
+    }),
+  }),
+});
