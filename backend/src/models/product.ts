@@ -30,7 +30,7 @@ const productSchema = new mongoose.Schema<IProduct>({
     required: true,
     unique: true,
     minlength: 2,
-    maxlenght: 30,
+    maxlength: 30,
   },
   image: {
     type: imageSchema,
