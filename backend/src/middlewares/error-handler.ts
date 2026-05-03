@@ -24,6 +24,5 @@ export const errorHandler = (
   }
 
   // 4. Всё остальное - ошибка сервера
-  console.error('Unhandled error:', err);
   return res.status(500).json({ message: 'На сервере произошла ошибка' });
 };
