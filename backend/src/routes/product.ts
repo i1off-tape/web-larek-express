@@ -1,32 +1,9 @@
-import { Request, Response } from 'express';
+import { Router } from 'express';
+import { createProduct, getProducts } from '../controllers/products';
 
-import Product from '../models/product';
+const router = Router();
 
-export const getProducts = (_req: Request, res: Response) => {
-  Product.find({})
-    .then((products) => res.send({ data: products }))
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
-};
+router.get('/', getProducts);
+router.post('/', createProduct);
 
-export const createProduct = (req: Request, res: Response) => {
-  const {
-    title, image, category, description, price,
-  } = req.body;
-  Product.create({
-    title,
-    image,
-    category,
-    description,
-    price,
-  })
-    .then((product) => res.status(201).send({ data: product }))
-    .catch((err) => {
-      if (err.code === 11000) {
-        res
-          .status(409)
-          .send({ message: 'Продукт с таким названием уже существует' });
-      } else {
-        res.status(500).send({ message: 'На сервере произошла ошибка' });
-      }
-    });
-};
+export default router;
