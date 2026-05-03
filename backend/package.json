@@ -31,8 +31,11 @@
     "celebrate": "^15.0.3",
     "dotenv": "^17.4.2",
     "express": "^4.19.2",
+    "express-async-errors": "^3.1.1",
+    "express-winston": "^4.2.0",
     "joi": "^18.1.2",
     "mongoose": "^8.3.2",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "winston": "^3.19.0"
   }
 }

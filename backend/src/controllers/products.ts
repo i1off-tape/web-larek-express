@@ -11,23 +11,24 @@ export const getProducts = (
     .catch((err) => next(err));
 };
 
-export const createProduct = (
+export const createProduct = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const {
-    title, image, category, description, price,
-  } = req.body;
-  Product.create({
-    title,
-    image,
-    category,
-    description,
-    price,
-  })
-    .then((product) => res.status(201).send({ data: product }))
-    .catch((err) => {
-      next(err);
+  try {
+    const {
+      title, image, category, description, price,
+    } = req.body;
+    const product = await Product.create({
+      title,
+      image,
+      category,
+      description,
+      price,
     });
+    return res.status(201).send({ data: product });
+  } catch (err) {
+    return next(err);
+  }
 };
