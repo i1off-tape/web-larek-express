@@ -13,16 +13,21 @@ interface IProduct {
   price?: number | null;
 }
 
-const imageSchema = new mongoose.Schema<IImage>({
-  fileName: {
-    type: String,
-    required: true,
+const imageSchema = new mongoose.Schema<IImage>(
+  {
+    fileName: {
+      type: String,
+      required: true,
+    },
+    originalName: {
+      type: String,
+      required: true,
+    },
   },
-  originalName: {
-    type: String,
-    required: true,
+  {
+    _id: false,
   },
-});
+);
 
 const productSchema = new mongoose.Schema<IProduct>({
   title: {
